@@ -1,0 +1,27 @@
+import pandas as pd
+import numpy as np
+# 1. Load the dataset
+# Replace 'your_dataset.csv' with your dataset path
+data = pd.read_csv('your_dataset.csv')
+# Display the first few rows of the dataset
+print("Original Dataset:")
+print(data.head())
+# 2. Handling missing values
+# Option 1: Fill missing numeric values with the mean of the column
+data.fillna(data.mean(), inplace=True)
+# Option 2: For categorical columns, you can fill missing values with mode
+# data['categorical_column'] = data['categorical_column'].fillna(data['categorical_column'].mode()[0])
+# 3. Remove duplicates
+data.drop_duplicates(inplace=True)
+
+
+# 4. Handling outliers using the IQR method
+# Calculate Q1 (25th percentile) and Q3 (75th percentile) for numeric columns
+Q1 = data.quantile(0.25)
+Q3 = data.quantile(0.75)
+IQR = Q3 - Q1
+# Define a range for outliers and remove rows that fall outside this range
+data_cleaned = data[~((data < (Q1 - 1.5 * IQR)) | (data > (Q3 + 1.5 * IQR))).any(axis=1)]
+# 5. Save the cleaned dataset to a new CSV file
+data_cleaned.to_csv('cleaned_dataset.csv', index=False)
+print("Data cleaning is complete. Cleaned dataset saved as 'cleaned_dataset.csv'")
